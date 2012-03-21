@@ -16,7 +16,7 @@ package {
 		
 		public function init_debug_sprite(e:Event) {
 			 FlxG.stage.addChild(DEBUG_SPRITE);
-			 DEBUG_SPRITE.visible = false;
+			 DEBUG_SPRITE.visible = true;
 		}
 		
 	}
