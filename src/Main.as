@@ -1,6 +1,7 @@
 package {
 	import flash.display.*;
 	import flash.events.*;
+	import flash.geom.Rectangle;
 	import org.flixel.FlxGame;
 	import org.flixel.FlxG
 	
@@ -17,6 +18,7 @@ package {
 		
 		public function init_debug_sprite(e:Event) {
 			 FlxG.stage.addChild(DEBUG_SPRITE);
+			 DEBUG_SPRITE.scrollRect = new Rectangle(0, 0, 650, 600);
 			 DEBUG_SPRITE.visible = true;
 		}
 		

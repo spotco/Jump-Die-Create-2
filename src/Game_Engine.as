@@ -107,11 +107,14 @@ package {
 			return cam;
 		}
 		
+		private var debug_scroll_rect:Rectangle = new Rectangle(0, 0, 650, 600);
+		
 		private function draw_b2_debug() {
 			Main.DEBUG_SPRITE.graphics.clear();
 			world.DrawDebugData();
-			Main.DEBUG_SPRITE.x = -cam.scroll.x;
-			Main.DEBUG_SPRITE.y = -cam.scroll.y;
+			debug_scroll_rect.x = cam.scroll.x;
+			debug_scroll_rect.y = cam.scroll.y;
+			Main.DEBUG_SPRITE.scrollRect = debug_scroll_rect;
 		}
 
 		
