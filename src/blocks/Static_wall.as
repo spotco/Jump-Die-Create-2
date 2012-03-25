@@ -55,7 +55,7 @@ package blocks {
 		}
 		
 		public function get_fixture_params():Object {
-			return { friction:0.3 , restitution:0 , density:0.7 };
+			return { friction:0.5 , restitution:0 , density:1 };
 		}
 		
 	}

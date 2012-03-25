@@ -11,7 +11,6 @@ package  {
 			var mag:Number = vec1.Length();
 			var angle:Number = Math.atan2(vec1.y, vec1.x);
 			angle += d2r(deg);
-			
 			vec1.x = mag * Math.cos(angle);
 			vec1.y = mag * Math.sin(angle);
 		}

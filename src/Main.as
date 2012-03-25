@@ -7,10 +7,11 @@ package {
 	[SWF(backgroundColor = "#FFFFFF", frameRate = "60", width = "650", height = "600")]
 	
 	public class Main extends FlxGame {
+		
 		public static var DEBUG_SPRITE:Sprite = new Sprite;
 		
 		public function Main():void {
-			super(650, 600, Test_2);
+			super(650, 600, Game_Engine);
 			addEventListener(Event.ADDED_TO_STAGE, init_debug_sprite);
 		}
 		
