@@ -4,8 +4,30 @@ package  {
 	import Box2D.Dynamics.Contacts.b2ContactEdge;
 	import flash.display.Sprite;
 	import Box2D.Dynamics.b2DebugDraw;
+	import org.flixel.FlxGroup;
+	import flash.geom.Rectangle;
+	import org.flixel.FlxSprite;
 	
 	public class Common {
+		
+		public static function get_bounds(game_obj:FlxGroup):Rectangle {
+			var o:Object;
+			for each (var s:FlxSprite in game_obj.members) {
+				if (!o) {
+					o = new Object;
+					o.min_x = s.x;
+					o.min_y = s.y;
+					o.max_x = s.x + s.width;
+					o.max_y = s.y + s.height;
+				} else {
+					o.min_x = Math.min(s.x,o.min_x);
+					o.min_y = Math.min(s.y,o.min_y);
+					o.max_x = Math.max(s.x + s.width,o.max_x);
+					o.max_y = Math.max(s.y + s.height,o.max_y);
+				}
+			}
+			return new Rectangle(o.min_x, o.min_y, o.max_x - o.min_x, o.max_y - o.min_y);
+		}
 		
 		public static function rotate_vector(vec1:b2Vec2, deg:Number) {
 			var mag:Number = vec1.Length();

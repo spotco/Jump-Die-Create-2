@@ -1,5 +1,6 @@
 package {
 	import blocks.*;
+	import flash.geom.Rectangle;
 	import player.*;
 	import Box2D.Collision.b2ManifoldPoint;
 	import Box2D.Collision.b2WorldManifold;
@@ -15,24 +16,28 @@ package {
 	import Box2D.Dynamics.*;
 	import Box2D.Dynamics.*;
 	
-	public class Game_Engine extends FlxState {		
+	public class Game_Engine extends FlxState {
+		
 		protected var world:b2World;
 		protected var game_obj:FlxGroup = new FlxGroup;
 		protected var player_obj:FlxGroup = new FlxGroup;
+		protected var cam:FlxCamera;
 		
 		public override function create():void {
 			super.create();
 			init_game_sys();
 			init_game_obj();
+			
+			FlxG.addCamera(cam=get_cam());
 		}
 		
 		public override function update():void {
 			super.update();
-			Main.DEBUG_SPRITE.graphics.clear();
-			world.DrawDebugData();
+			
+			draw_b2_debug();
+			
 			world.Step(0.025, 10, 10);
 			player_control();
-			
 		}
 		
 		private function player_control() {
@@ -49,11 +54,11 @@ package {
 		}
 		
 		private function init_player() {
-			var p1:Dynamic_box = new Dynamic_box(400, 20, 20, 20, world);
+			/*var p1:Dynamic_box = new Dynamic_box(400, 20, 20, 20, world);
 			p1.body.SetSleepingAllowed(false);
 			p1.params.jump_force = 6;
 			player_obj.add(p1);
-			this.add(p1);
+			this.add(p1);*/
 			
 			var p2:Dynamic_ball = new Dynamic_ball(100, 50, 20, world);
 			p2.body.SetSleepingAllowed(false);
@@ -63,27 +68,22 @@ package {
 		}
 		
 		private function init_world_obj() {
-			var floor:Static_wall = new Static_wall(0, 590, FlxG.width, 10, world);
-			game_obj.add(floor);
-			this.add(floor);
+			var world_blocks:Array = [
+				new Static_wall(0, 700, FlxG.width + 300, 30, world),
+				new Static_wall(0, 0, FlxG.width, 10, world),
+				new Static_wall(0, 0, 10, FlxG.height + 200, world),
+				new Static_wall(640, -150, 10, FlxG.height, world),
+				new Static_wall(250, 0, 100, 500, world),
+				new Static_wall(950, 300, 30, 500, world),
+				new Dynamic_ball(450, 300, 60, world)
+			];
 			
-			var ceil:Static_wall = new Static_wall(0, 0, FlxG.width, 10, world);
-			game_obj.add(ceil);
-			this.add(ceil);
-			
-			var left_wall:Static_wall = new Static_wall(0, 0, 10, FlxG.height, world);
-			game_obj.add(left_wall);
-			this.add(left_wall);
-			
-			var right_wall:Static_wall = new Static_wall(640, 0, 10, FlxG.height, world);
-			game_obj.add(right_wall);
-			this.add(right_wall);
-			
-			var t:Static_wall = new Static_wall(250, 0, 100, 500, world);
-			game_obj.add(t);
-			this.add(t);
-			
-			var b:Dynamic_ball = new Dynamic_ball(450, 300, 60, world);
+			for each(var b:Base_block in world_blocks) {
+				add_to_game(b);
+			}
+		}
+		
+		private function add_to_game(b:Base_block) {
 			game_obj.add(b);
 			this.add(b);
 		}
@@ -96,6 +96,22 @@ package {
 			world = new b2World(gravity, true);
 			
 			Common.init_debug_draw(Main.DEBUG_SPRITE, world);
+		}
+		
+		private function get_cam():FlxCamera {
+			var cam:FlxCamera = new FlxCamera(0, 0, FlxG.width, FlxG.height);
+			cam.follow(player_obj.members[0]);
+			cam.deadzone = new FlxRect(FlxG.width / 2 - 100, FlxG.height / 2 - 100, 200, 200);
+			var b_r:Rectangle = Common.get_bounds(game_obj);
+			cam.setBounds(b_r.x, b_r.y, b_r.width, b_r.height);
+			return cam;
+		}
+		
+		private function draw_b2_debug() {
+			Main.DEBUG_SPRITE.graphics.clear();
+			world.DrawDebugData();
+			Main.DEBUG_SPRITE.x = -cam.scroll.x;
+			Main.DEBUG_SPRITE.y = -cam.scroll.y;
 		}
 
 		
