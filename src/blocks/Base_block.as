@@ -15,7 +15,10 @@ package blocks {
 		public var body_def:b2BodyDef;
 		public var body:b2Body;
 		public var world:b2World;
+		
 		public var params:Object = new Object;
+		
+		public var controlled:Boolean=false;
 	
 	}
 

@@ -21,7 +21,9 @@ package {
 		protected var world:b2World;
 		protected var game_obj:FlxGroup = new FlxGroup;
 		protected var player_obj:FlxGroup = new FlxGroup;
+		
 		protected var cam:FlxCamera;
+		protected var cam_follow:FlxSprite;
 		
 		public override function create():void {
 			super.create();
@@ -34,7 +36,7 @@ package {
 		public override function update():void {
 			super.update();
 			
-			draw_b2_debug();
+			debug_update();
 			
 			world.Step(0.025, 10, 10);
 			player_control();
@@ -42,9 +44,12 @@ package {
 		
 		private function player_control() {
 			for each(var p:Base_block in player_obj.members) {
-				Player_Common.player_control(p, world);
+				if (p.controlled) {
+					Player_Common.player_control(p, world);
+				}
 			}
 			Player_Common.swap_gravity_test(world);
+			cam_follow = Player_Common.swap_controlled_test(player_obj, cam, cam_follow);
 		}
 		
 		
@@ -54,17 +59,24 @@ package {
 		}
 		
 		private function init_player() {
-			/*var p1:Dynamic_box = new Dynamic_box(400, 20, 20, 20, world);
+			var p1:Dynamic_box = new Dynamic_box(400, 20, 20, 20, world);
 			p1.body.SetSleepingAllowed(false);
 			p1.params.jump_force = 6;
-			player_obj.add(p1);
-			this.add(p1);*/
+			p1.controlled = true;
+			cam_follow = p1;
 			
 			var p2:Dynamic_ball = new Dynamic_ball(100, 50, 20, world);
 			p2.body.SetSleepingAllowed(false);
 			p2.params.jump_force = 17;
-			player_obj.add(p2);
-			this.add(p2);
+			
+			var p3:Dynamic_ball = new Dynamic_ball(600, 50, 40, world);
+			p3.body.SetSleepingAllowed(false);
+			p3.params.jump_force = 60;
+			
+			for each(var p:Base_block in [p1,p2,p3]) {
+				player_obj.add(p);
+				this.add(p);
+			}
 		}
 		
 		private function init_world_obj() {
@@ -79,13 +91,9 @@ package {
 			];
 			
 			for each(var b:Base_block in world_blocks) {
-				add_to_game(b);
+				game_obj.add(b);
+				this.add(b);
 			}
-		}
-		
-		private function add_to_game(b:Base_block) {
-			game_obj.add(b);
-			this.add(b);
 		}
 		
 		private function init_game_sys() {
@@ -100,7 +108,7 @@ package {
 		
 		private function get_cam():FlxCamera {
 			var cam:FlxCamera = new FlxCamera(0, 0, FlxG.width, FlxG.height);
-			cam.follow(player_obj.members[0]);
+			cam.follow(cam_follow);
 			cam.deadzone = new FlxRect(FlxG.width / 2 - 100, FlxG.height / 2 - 100, 200, 200);
 			var b_r:Rectangle = Common.get_bounds(game_obj);
 			cam.setBounds(b_r.x, b_r.y, b_r.width, b_r.height);
@@ -108,10 +116,11 @@ package {
 		}
 		
 		private var debug_scroll_rect:Rectangle = new Rectangle(0, 0, 650, 600);
-		
-		private function draw_b2_debug() {
-			Main.DEBUG_SPRITE.graphics.clear();
-			world.DrawDebugData();
+		private function debug_update() {
+			if (Main.B2_DEBUG_DRAW) {
+				Main.DEBUG_SPRITE.graphics.clear();
+				world.DrawDebugData();
+			}
 			debug_scroll_rect.x = cam.scroll.x;
 			debug_scroll_rect.y = cam.scroll.y;
 			Main.DEBUG_SPRITE.scrollRect = debug_scroll_rect;

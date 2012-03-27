@@ -59,6 +59,31 @@ package  {
 			return count;
 		}
 		
+		public static function round_dec(numIn:Number, decimalPlaces:int):Number {
+			var nExp:int = Math.pow(10,decimalPlaces) ;
+			var nRetVal:Number = Math.round(numIn * nExp) / nExp
+			return nRetVal;
+		}
+		
+		public static function sig_n(chk:Number,val:Number=1):Number {
+			if (chk < 0) {
+				return -val;
+			} else if (chk > 0) {
+				return val;
+			} else {
+				return val;
+			}
+		}
+		
+		public static function round_vec(v:b2Vec2, dec:Number=1) {
+			v.x = round_dec(v.x, dec);
+			v.y = round_dec(v.y, dec);
+		}
+		
+		public static function print_vec(v:b2Vec2):String {
+			return "(" + v.x + "," + v.y + ")";
+		}
+		
 		public static function d2r(d:Number):Number {
 			return d * (Math.PI / 180);
 		}
@@ -75,7 +100,7 @@ package  {
 			return m * pixel_meter_ratio;
 		}
 		
-		public static var pixel_meter_ratio:Number = 30;
+		private static var pixel_meter_ratio:Number = 30;
 		
 	}
 
